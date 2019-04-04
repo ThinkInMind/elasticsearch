@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.d1m.elasticsearch.repository.MultiTenantRepository">
+
+<select id="listAll" resultType="java.util.Map">
+    Select b.wechat_id wechatId,a.jdbc_url jdbcUrl,a.username username,a.`password` `password` From multi_tenant as a LEFT JOIN tenancy_wechat as b on a.id=b.tenancy_id
+</select>
+
+</mapper>

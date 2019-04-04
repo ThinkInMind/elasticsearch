@@ -1,0 +1,46 @@
+spring:
+  aop:
+    proxy-target-class: true
+
+  sleuth:
+    sampler:
+      percentage: 0.2 #日志的采样率
+
+
+
+##  demo for  rabbit connect  . when you use rabbitmq ,check your pom.xml refrence  parent's pom /##
+  rabbitmq:
+    host: ${RABBITMQ_DEFAULT_HOST:${ENV_HOST}}
+    port: 5672
+    username: ${RABBITMQ_DEFAULT_USER:admin}
+    password: ${RABBITMQ_DEFAULT_PASS:admin}
+
+
+
+##  demo for  redis connect ##
+  redis:
+    host: ${REDIS_DEFAULT_HOST:${ENV_HOST}}
+    password: ${REDIS_DEFAULT_PASS:redis}
+    port: ${REDIS_PORT:6379}
+    database: ${REDIS_POPUP_DB:4}
+    ssl: ${REDIS_SSL:false}
+
+
+##  demo for  database connect ##
+  datasource:
+      url: jdbc:mysql://${MYSQL_HOST:${ENV_HOST}}:${MYSQL_PORT:3306}/${MYSQL_DB:estore_tenancydb}?autoReconnect=true&useAffectedRows=true&useSSL=${MYSQL_SSL:false}
+      username: ${MYSQL_USER:root}
+      password: ${MYSQL_PASSWORD:mysql123}
+      driver-class-name: com.mysql.jdbc.Driver
+      type: com.alibaba.druid.pool.DruidDataSource
+
+
+logging:
+  level:
+    com.d1m.elasticsearch.repository: DEBUG
+  ##config: classpath:logback-spring.xml
+  path: /var/log/estore-scrm
+mybatis:
+  type-aliases-package: com.d1m.elasticsearch.domain.entity
+  mapper-locations: classpath:mapper/**/*.xml
+
