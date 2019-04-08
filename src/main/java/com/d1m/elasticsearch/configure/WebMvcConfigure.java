@@ -13,6 +13,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.nio.charset.StandardCharsets;
@@ -27,7 +28,7 @@ import java.util.List;
  */
 @Configuration
 @EnableWebMvc
-public class WebMvcConfigure extends WebMvcConfigurerAdapter {
+public class WebMvcConfigure implements WebMvcConfigurer {
 
     //@Override
     //public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -37,7 +38,6 @@ public class WebMvcConfigure extends WebMvcConfigurerAdapter {
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        super.configureMessageConverters(converters);
         converters.add(stringHttpMessageConverter());
         converters.add(mappingJackson2HttpMessageConverter());
         converters.add(byteArrayHttpMessageConverter());

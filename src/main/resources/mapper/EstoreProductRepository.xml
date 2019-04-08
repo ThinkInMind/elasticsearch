@@ -2,8 +2,108 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.d1m.elasticsearch.repository.EstoreProductRepository">
 
+    <resultMap id="productResult" type="com.d1m.elasticsearch.domain.response.ProductResult">
+        <id column="id" property="productId" jdbcType="BIGINT" />
+        <result column="name" property="productName" jdbcType="VARCHAR" />
+        <result column="code" property="productCode" jdbcType="VARCHAR" />
+        <result column="sub_title" property="subTitle" jdbcType="VARCHAR" />
+        <result column="ext_attr" property="extAttr" jdbcType="VARCHAR" typeHandler="com.d1m.elasticsearch.util.mybatis.JsonTypeHandler" />
+        <result column="spec_type" property="specType" jdbcType="TINYINT" />
+        <result column="spec_meta" property="specMeta" jdbcType="VARCHAR" typeHandler="com.d1m.elasticsearch.util.mybatis.JsonTypeHandler" />
+        <result column="create_at" property="createAt" jdbcType="TIMESTAMP" />
+        <result column="modify_at" property="modifyAt" jdbcType="TIMESTAMP" />
+        <result column="status" property="status" jdbcType="TINYINT" />
+        <result column="wechat_id" property="wechatId" jdbcType="BIGINT" />
+        <result column="description" property="description" jdbcType="LONGVARCHAR" />
+        <result column="sale_id" property="saleId" jdbcType="BIGINT" />
+        <result column="on_sale" property="onSale" jdbcType="TINYINT" />
+        <result column="delivery_free" property="deliveryFree" jdbcType="TINYINT" />
+        <result column="delivery_tpl_id" property="deliveryTplId" jdbcType="BIGINT" />
+        <result column="sku" property="sku" jdbcType="VARCHAR" />
+        <result column="spec_id" property="specId" jdbcType="BIGINT" />
+        <result column="market_price" property="marketPrice" jdbcType="DECIMAL" />
+        <result column="price" property="salePrice" jdbcType="DECIMAL" />
+        <result column="currency" property="currency" jdbcType="VARCHAR"/>
+        <result column="product_limit" property="productLimit" jdbcType="INTEGER"/>
+        <result column="currency"  property="currency" jdbcType="VARCHAR" />
+        <result column="inWishList" property="inWishList" jdbcType="VARCHAR" />
+        <result column="stock" property="stock" jdbcType="INTEGER" />
+        <result column="seq" property="seq" jdbcType="INTEGER" />
+        <result column="product_type" property="productType" jdbcType="INTEGER"/>
+        <collection property="images" column="{wechatId=wechat_id,id=id}"
+                    select="com.d1m.elasticsearch.repository.EstoreProductImageRepository.selectProductImageListByProductId" />
+        <collection property="categories" column="{wechatId=wechat_id,productId=id}"
+                    select="com.d1m.elasticsearch.repository.EstoreProductCategoryRepository.selectCategoryWithNameListByProductId" />
+        <collection property="tags" column="{wechatId=wechat_id,productId=id}"
+                    select="com.d1m.elasticsearch.repository.EstoreProductTagRepository.selectTagListWithNameByProductId" />
+        <collection property="variationProducts" column="{wechatId=wechat_id,productId=id,sku=sku,specId=spec_id}"
+                    select="com.d1m.elasticsearch.repository.EstoreProductSpecRepository.selectProductSpecBySpecIdAndProductId" />
+        <collection property="relatedProducts" column="{wechatId=wechat_id,productId=id}"
+                    select="com.d1m.elasticsearch.repository.EstoreProductRepository.selectProductsByRelatedProductId" />
+        <collection property="catalogs" column="{wechatId=wechat_id,productId=id}"
+                    select="com.d1m.elasticsearch.repository.EstoreCatalogRepository.selectCatalogWithNameListByProductId"/>
+    </resultMap>
+
+    <resultMap id="simpleProductResult" type="com.d1m.elasticsearch.domain.response.ProductSimpleResult">
+        <id column="id" property="productId" jdbcType="BIGINT" />
+        <result column="name" property="productName" jdbcType="VARCHAR" />
+        <result column="sub_title" property="subTitle" jdbcType="VARCHAR" />
+        <result column="create_at" property="createAt" jdbcType="TIMESTAMP" />
+        <result column="modify_at" property="modifyAt" jdbcType="TIMESTAMP" />
+        <result column="status" property="status" jdbcType="TINYINT" />
+        <result column="wechat_id" property="wechatId" jdbcType="BIGINT" />
+        <result column="description" property="description" jdbcType="LONGVARCHAR" />
+        <result column="sale_id" property="saleId" jdbcType="BIGINT" />
+        <result column="market_price" property="marketPrice" jdbcType="DECIMAL" />
+        <result column="price" property="salePrice" jdbcType="DECIMAL" />
+        <result column="on_sale" property="onSale" jdbcType="TINYINT" />
+        <result column="currency"  property="currency" jdbcType="VARCHAR" />
+        <result column="inWishList"  property="inWishList" jdbcType="VARCHAR" />
+        <result column="code" property="productCode" jdbcType="VARCHAR" />
+        <result column="size_chart_code" property="sizeChartCode" jdbcType="VARCHAR" typeHandler="com.d1m.elasticsearch.util.mybatis.JsonTypeHandler" />
+        <result column="spec_meta" property="specMeta" jdbcType="VARCHAR" typeHandler="com.d1m.elasticsearch.util.mybatis.JsonTypeHandler" />
+        <result column="stock" property="stock" jdbcType="INTEGER" />
+        <result column="product_type" property="productType" jdbcType="INTEGER"/>
+        <collection property="categories" column="{wechatId=wechat_id,productId=id}"
+                    select="com.d1m.elasticsearch.repository.EstoreProductCategoryRepository.selectCategoryWithNameListByProductId" />
+        <collection property="tags" column="{wechatId=wechat_id,productId=id}"
+                    select="com.d1m.elasticsearch.repository.EstoreProductTagRepository.selectTagListWithNameByProductId" />
+        <collection property="images" column="{wechatId=wechat_id,id=id}"
+                    select="com.d1m.elasticsearch.repository.EstoreProductImageRepository.selectProductImageListByProductId" />
+        <collection property="catalogs" column="{wechatId=wechat_id,productId=id}"
+                    select="com.d1m.elasticsearch.repository.EstoreCatalogRepository.selectCatalogWithNameListByProductId"/>
+    </resultMap>
+
     <select id="findo" resultType="com.d1m.elasticsearch.domain.entity.EstoreProduct">
-        select * from estore_product a  where a.name = #{arg0} and a.code = #{arg1}
+        select * from estore_product a  where a.name = #{name} and a.code = #{code}
     </select>
 
+
+    <select id="findProductsWithConditions" resultMap="productResult">
+        select
+        DISTINCT a.*,a.on_sale,a.market_price,a.price,g.sku,g.id as spec_id,
+        (SELECT  value from estore_config where segment='CURRENCY' and `key`='CURRENCY'  and wechat_id=#{wechatId}) as currency,(select sum(stock) from estore_product_spec where product_id=a.id and estore_product_spec.status=1) as stock
+        from estore_product a
+        LEFT JOIN  estore_product_category as f on f.product_id=a.id
+        LEFT JOIN estore_product_spec as g on g.product_id=a.id
+        LEFT JOIN estore_product_catalog as h on h.product_id=a.id
+        <where>
+        1=1 and                 a.wechat_id = #{wechatId}
+        </where>
+        GROUP BY a.id
+        limit #{offset},#{pageSize}
+    </select>
+
+
+    <select id="selectProductsByRelatedProductId" resultMap="simpleProductResult">
+        select a.*,a.code,b.id as sale_id,a.on_sale,b.delivery_free,b.delivery_tpl_id,a.market_price,a.price, (SELECT value from estore_config where segment='CURRENCY' and `key`='CURRENCY'  and wechat_id=#{wechatId}) as currency,(select sum(stock) from estore_product_spec where product_id=a.id) as stock
+        from estore_product a
+        left join estore_product_sale b on b.product_id=a.id
+        RIGHT join estore_related_product c on c.related_product_id=a.id
+        <where>
+            a.wechat_id = #{wechatId} and a.status = 1
+            and c.`product_id` = #{productId}
+        </where>
+
+    </select>
 </mapper>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.d1m.elasticsearch.repository.EstoreProductTagRepository" >
+
+
+  <resultMap id="tagResultMap" type="com.d1m.elasticsearch.domain.response.EstoreProductTagResult" >
+    <result column="product_id" property="productId" jdbcType="BIGINT" />
+    <result column="tag_id" property="tagId" jdbcType="BIGINT" />
+    <result column="wechat_id" property="wechatId" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="tag_img" property="tagImg" jdbcType="VARCHAR" />
+  </resultMap>
+
+
+  <select id="selectTagListWithNameByProductId" resultMap="tagResultMap">
+    SELECT a.*,b.name,b.tag_img FROM estore_product_tag  as a left join estore_tag as b on a.tag_id=b.id where a.product_id = #{productId}
+  </select>
+
+</mapper>

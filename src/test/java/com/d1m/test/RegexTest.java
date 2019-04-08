@@ -4,7 +4,7 @@ package com.d1m.test;
 import com.d1m.elasticsearch.ElasticsearchApplication;
 import com.d1m.elasticsearch.common.multitenancy.TenantContext;
 import com.d1m.elasticsearch.domain.entity.EstoreProduct;
-import com.d1m.elasticsearch.domain.index.ProductSpec;
+import com.d1m.elasticsearch.domain.index.Goods;
 import com.d1m.elasticsearch.repository.EstoreProductRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,7 +46,7 @@ public class RegexTest {
 
     @Test
     public void CreateIndex(){
-        elasticsearchTemplate.putMapping(ProductSpec.class);
+        elasticsearchTemplate.putMapping(Goods.class);
 //        System.out.println(new Date(1572278400*1000));
     }
     @Test

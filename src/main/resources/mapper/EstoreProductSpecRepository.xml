@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.d1m.elasticsearch.repository.EstoreProductSpecRepository" >
+
+
+  <resultMap id="searchResultMap" type="com.d1m.elasticsearch.domain.response.ProductSpecResult" >
+    <id column="id" property="specId" jdbcType="BIGINT" />
+    <result column="sku" property="sku" jdbcType="VARCHAR" />
+    <result column="spec_type" property="specType" jdbcType="TINYINT" />
+    <result column="spec_value" property="specValue" jdbcType="VARCHAR" typeHandler="com.d1m.elasticsearch.util.mybatis.JsonTypeHandler" />
+    <result column="market_price" property="marketPrice" jdbcType="DECIMAL" />
+    <result column="price" property="salePrice" jdbcType="DECIMAL" />
+    <result column="point" property="point" jdbcType="INTEGER" />
+    <result column="stock" property="stock" jdbcType="INTEGER" />
+    <result column="frozen_stock" property="frozenStock" jdbcType="INTEGER" />
+    <result column="weight" property="weight" jdbcType="DOUBLE" />
+    <result column="volume" property="volume" jdbcType="DOUBLE" />
+    <result column="create_at" property="createAt" jdbcType="TIMESTAMP" />
+    <result column="modify_at" property="modifyAt" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="product_id" property="productId" jdbcType="BIGINT" />
+    <result column="wechat_id" property="wechatId" jdbcType="BIGINT" />
+    <result column="currency"  property="currency" jdbcType="VARCHAR" />
+    <result column="seq"  property="seq" jdbcType="INTEGER" />
+    <result column="product_name"  property="productName" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="sub_title" property="subTitle" jdbcType="VARCHAR" />
+    <result column="spec_name" property="specName" jdbcType="VARCHAR" />
+    <result column="syn_stock" property="synStock" jdbcType="TINYINT" />
+    <result column="ext_attr" property="extAttr" jdbcType="VARCHAR" typeHandler="com.d1m.elasticsearch.util.mybatis.JsonTypeHandler" />
+    <collection property="images" column="id"
+                select="com.d1m.elasticsearch.repository.EstoreProductImageRepository.selectProductSpecImageListBySpecId" />
+  </resultMap>
+
+  <select id="selectProductSpecBySpecIdAndProductId" resultMap="searchResultMap">
+    SELECT *, (SELECT value from estore_config where segment='CURRENCY' and `key`='CURRENCY'  and wechat_id=#{wechatId}) as currency  FROM estore_product_spec
+    <where>
+      <if test="productId != null">
+        and product_id = #{productId}
+      </if>
+    </where>
+  </select>
+
+</mapper>

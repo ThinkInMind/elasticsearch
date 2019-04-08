@@ -1,9 +1,7 @@
 package com.d1m.elasticsearch.service.impl;
 
-import com.d1m.elasticsearch.domain.index.Product;
 import com.d1m.elasticsearch.domain.param.PageParam;
 import com.d1m.elasticsearch.domain.request.SearchParam;
-import com.d1m.elasticsearch.repository.GoodsRepository;
 import com.d1m.elasticsearch.service.SearchService;
 import com.d1m.elasticsearch.util.PageUtil.PageBean;
 import org.apache.commons.lang.StringUtils;
@@ -16,20 +14,18 @@ import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 
 @Service
 public class SearchServiceImpl implements SearchService {
 
-    @Autowired
-    private GoodsRepository goodsRepository;
+//    @Autowired
+//    private GoodsRepository goodsRepository;
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
@@ -48,14 +44,14 @@ public class SearchServiceImpl implements SearchService {
 //        SearchResponse searchResponse = new SearchResponse();
 
 
-        QueryBuilder joinQueryBuilder = JoinQueryBuilders.hasChildQuery(
-                "user",
-                QueryBuilders.matchAllQuery(),
-                ScoreMode.None
-        );
+//        QueryBuilder joinQueryBuilder = JoinQueryBuilders.hasChildQuery(
+//                "user",
+//                QueryBuilders.matchAllQuery(),
+//                ScoreMode.None
+//        );
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(buildBasicQuery(pageParam.getSearchParam()))
-//                .withPageable(PageRequest.of(pageParam.getCurrentPage(), pageParam.getPageSize()))
+                .withPageable(PageRequest.of(pageParam.getCurrentPage(), pageParam.getPageSize()))
                 .withSort(SortBuilders.fieldSort(pageParam.getSortBy()).order(pageParam.getDescending() ? SortOrder.DESC : SortOrder.ASC))
                 .build();
 //        /** create a query builder */
@@ -66,17 +62,17 @@ public class SearchServiceImpl implements SearchService {
 //        /** pagination */
 //        searchWithPageAndSort(queryBuilder, pageParam);
         HighlightBuilder highlightBuilder = new HighlightBuilder();
-        Page<Product> searchResults = elasticsearchTemplate.queryForPage(searchQuery, Product.class);
-        List<Product> content = searchResults.getContent();
-
-//        Page<Product> searchResults = goodsRepository.search(queryBuilder.build());
-        List<Product> contents = searchResults.getContent();
+//        Page<Product> searchResults = elasticsearchTemplate.queryForPage(searchQuery, Product.class);
+//        List<Product> content = searchResults.getContent();
+//
+////        Page<Product> searchResults = goodsRepository.search(queryBuilder.build());
+//        List<Product> contents = searchResults.getContent();
         return null;
     }
 
     private QueryBuilder buildBasicQuery(SearchParam searchParam) {
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
-        queryBuilder.must(QueryBuilders.matchQuery("name", searchParam.getKey()));
+        queryBuilder.should(QueryBuilders.matchQuery("name", searchParam.getKey()));
         Long startTime = searchParam.getStartTime();
         Long endTime = searchParam.getEndTime();
         if (startTime != null && endTime != null && endTime >= startTime) {

@@ -1,8 +1,8 @@
 package com.d1m.elasticsearch.common.multitenancy;
 
-import com.alibaba.druid.pool.DruidDataSource;
 import com.d1m.elasticsearch.configure.MybatisSelectConfigure;
 import com.d1m.elasticsearch.repository.MultiTenantRepository;
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
@@ -31,8 +31,8 @@ public class MultitenantConfiguration {
         List<JDBCConfig> jdbcConfigList = getJDBCList();
         Map<Object,Object> resolvedDataSources = new HashMap<>();
         jdbcConfigList.forEach(jdbcConfig -> {
-            DruidDataSource druidDataSource = getDataSource(jdbcConfig);
-            resolvedDataSources.put(jdbcConfig.getWechatId(), druidDataSource);
+            HikariDataSource hikariDataSource = getDataSource(jdbcConfig);
+            resolvedDataSources.put(jdbcConfig.getWechatId(), hikariDataSource);
         });
 
         if(dataSource instanceof MultitenantDataSource){
@@ -58,13 +58,13 @@ public class MultitenantConfiguration {
         return jdbcConfigList;
     }
 
-    public DruidDataSource getDataSource(JDBCConfig jdbcConfig){
-        DruidDataSource druidDataSource = new DruidDataSource();
-        druidDataSource.setMaxActive(16);
-        druidDataSource.setDriverClassName(properties.getDriverClassName());
-        druidDataSource.setUrl(jdbcConfig.getUrl());
-        druidDataSource.setUsername(jdbcConfig.getUserName());
-        druidDataSource.setPassword(jdbcConfig.getPassword());
-        return druidDataSource;
+    public HikariDataSource getDataSource(JDBCConfig jdbcConfig){
+        HikariDataSource hikariDataSource = new HikariDataSource();
+        hikariDataSource.setMaximumPoolSize(16);
+        hikariDataSource.setDriverClassName(properties.getDriverClassName());
+        hikariDataSource.setJdbcUrl(jdbcConfig.getUrl());
+        hikariDataSource.setUsername(jdbcConfig.getUserName());
+        hikariDataSource.setPassword(jdbcConfig.getPassword());
+        return hikariDataSource;
     }
 }

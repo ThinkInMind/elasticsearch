@@ -1,15 +1,15 @@
 package com.d1m.elasticsearch.repository;
 
 import com.d1m.elasticsearch.domain.entity.EstoreProduct;
-import org.springframework.data.mybatis.repository.annotation.Query;
-import org.springframework.data.mybatis.repository.support.MybatisRepository;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import com.d1m.elasticsearch.domain.response.ProductResult;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 
-public interface EstoreProductRepository extends MybatisRepository<EstoreProduct,Long>{
+public interface EstoreProductRepository{
 
-    @Query
-    EstoreProduct findo(@Param("name")String name, @Param("code")String code);
+    EstoreProduct findo(@Param("name") String name, @Param("code")String code);
 
+    List<ProductResult> findProductsWithConditions(@Param("wechatId") Integer wechatId,@Param("offset")Integer offset,@Param("pageSize")Integer pageSize);
 }

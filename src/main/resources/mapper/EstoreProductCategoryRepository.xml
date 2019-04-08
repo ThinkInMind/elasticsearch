@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.d1m.elasticsearch.repository.EstoreProductCategoryRepository" >
+
+
+
+  <resultMap id="categoryResultMap" type="com.d1m.elasticsearch.domain.response.EstoreProductCategoryResult" >
+    <result column="product_id" property="productId" jdbcType="BIGINT" />
+    <result column="category_id" property="categoryId" jdbcType="BIGINT" />
+    <result column="wechat_id" property="wechatId" jdbcType="BIGINT" />
+    <result column="description" property="description" jdbcType="BIGINT" />
+    <result column="main_image_url" property="mainImageUrl" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="BIGINT" />
+  </resultMap>
+
+  <select id="selectCategoryWithNameListByProductId" resultMap="categoryResultMap">
+    SELECT a.*,a.wechat_id as wechat_id,b.name,b.description,b.main_image_url FROM estore_product_category as a  LEFT JOIN estore_category as b on a.category_id = b.id
+    where a.product_id = #{productId} and a.wechat_id=#{wechatId}
+  </select>
+
+
+
+
+</mapper>

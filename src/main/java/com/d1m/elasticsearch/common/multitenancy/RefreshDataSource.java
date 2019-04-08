@@ -1,6 +1,6 @@
 package com.d1m.elasticsearch.common.multitenancy;
 
-import com.alibaba.druid.pool.DruidDataSource;
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.stereotype.Component;
@@ -26,8 +26,8 @@ public class RefreshDataSource {
 
         Map<Object,Object> resolvedDataSources = new HashMap<>();
         jdbcConfigList.forEach(jdbcConfig -> {
-            DruidDataSource druidDataSource = multitenantConfiguration.getDataSource(jdbcConfig);
-            resolvedDataSources.put(jdbcConfig.getWechatId(), druidDataSource);
+            HikariDataSource hikariDataSource = multitenantConfiguration.getDataSource(jdbcConfig);
+            resolvedDataSources.put(jdbcConfig.getWechatId(), hikariDataSource);
         });
 
         MultitenantDataSource multitenantDataSource = (MultitenantDataSource) dataSource;

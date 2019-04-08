@@ -2,11 +2,8 @@ package com.d1m.elasticsearch.domain.entity;
 
 import com.alibaba.fastjson.JSONObject;
 import com.d1m.elasticsearch.common.SearchSerializableId;
-import com.d1m.elasticsearch.util.mybatis.JsonTypeHandler;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.mybatis.annotations.JdbcType;
-import org.springframework.data.mybatis.annotations.TypeHandler;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,8 +29,6 @@ public class EstoreProduct extends SearchSerializableId<Long> {
      * 预留：格式化的扩展属性，JSON格式
      */
     @Column(name = "ext_attr")
-    @TypeHandler(JsonTypeHandler.class)
-    @JdbcType(org.apache.ibatis.type.JdbcType.VARCHAR)
     private JSONObject extAttr;
 
     /**
@@ -46,8 +41,6 @@ public class EstoreProduct extends SearchSerializableId<Long> {
      * 规格元数据（多规格使用，JSON格式）
      */
     @Column(name = "spec_meta")
-    @TypeHandler(JsonTypeHandler.class)
-    @JdbcType(org.apache.ibatis.type.JdbcType.VARCHAR)
     private JSONObject specMeta;
 
     /**

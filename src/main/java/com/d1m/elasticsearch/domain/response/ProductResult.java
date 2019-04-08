@@ -1,31 +1,25 @@
-package com.d1m.elasticsearch.domain.index;
+package com.d1m.elasticsearch.domain.response;
 
 import com.alibaba.fastjson.JSONObject;
 import com.d1m.elasticsearch.domain.entity.EstoreProductImage;
-import com.d1m.elasticsearch.domain.response.EstoreProductCatalogResult;
-import com.d1m.elasticsearch.domain.response.EstoreProductCategoryResult;
+import com.d1m.elasticsearch.domain.entity.EstoreProductTag;
 import com.d1m.elasticsearch.util.mybatis.JsonTypeHandler;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.mybatis.annotations.JdbcType;
 import org.springframework.data.mybatis.annotations.TypeHandler;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
-@Document(indexName = "goods",type = "docs",shards = 5,replicas = 1)
+/**
+ * Created by D1M on 2018/3/19.
+ */
 @Data
-public class Goods {
-    @Id
-    private Long id;//spuId
-    @Field(type = FieldType.Text,analyzer = "ik_max_word")
-    private String all;//可以搜索的关键短语
-    @Field(type = FieldType.Keyword)
-    private String skus;//当前spu下的多个sku json格式
+public class ProductResult implements Serializable{
+
+    private Long productId;
 
     private String description;
 
@@ -54,10 +48,8 @@ public class Goods {
     @JdbcType(org.apache.ibatis.type.JdbcType.VARCHAR)
     private JSONObject extAttr;
 
-    @Field(type = FieldType.Long)
     private Timestamp createAt;
 
-    @Field(type = FieldType.Long)
     private Timestamp modifyAt;
 
     private Byte status;
@@ -108,14 +100,19 @@ public class Goods {
 
     private List<EstoreProductImage> images;
 
-    private List<EstoreProductCategoryResult> categories;
+    private List<EstoreProductTag> tags;
+
+    private List<ProductSpecResult> variationProducts;
+
+    private List<ProductResult> relatedProducts;
 
     private List<EstoreProductCatalogResult> catalogs;
+
+    private List<EstoreProductCategoryResult> categories;
 
     private Integer seq;
 
     private String subTitle;
 
     private Byte productType;
-
 }
