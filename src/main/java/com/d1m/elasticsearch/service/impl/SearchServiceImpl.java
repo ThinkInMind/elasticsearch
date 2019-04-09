@@ -1,7 +1,9 @@
 package com.d1m.elasticsearch.service.impl;
 
+import com.d1m.elasticsearch.domain.index.Goods;
 import com.d1m.elasticsearch.domain.param.PageParam;
 import com.d1m.elasticsearch.domain.request.SearchParam;
+import com.d1m.elasticsearch.repository.GoodsRepository;
 import com.d1m.elasticsearch.service.SearchService;
 import com.d1m.elasticsearch.util.PageUtil.PageBean;
 import org.apache.commons.lang.StringUtils;
@@ -14,18 +16,21 @@ import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 public class SearchServiceImpl implements SearchService {
 
-//    @Autowired
-//    private GoodsRepository goodsRepository;
+    @Autowired
+    private GoodsRepository goodsRepository;
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
@@ -61,18 +66,24 @@ public class SearchServiceImpl implements SearchService {
 //        queryBuilder.withQuery(basicBuilder);
 //        /** pagination */
 //        searchWithPageAndSort(queryBuilder, pageParam);
-        HighlightBuilder highlightBuilder = new HighlightBuilder();
-//        Page<Product> searchResults = elasticsearchTemplate.queryForPage(searchQuery, Product.class);
-//        List<Product> content = searchResults.getContent();
+//        HighlightBuilder highlightBuilder = new HighlightBuilder();
+//        Page<Goods> searchResults = elasticsearchTemplate.queryForPage(searchQuery, Goods.class);
+//        List<Goods> content = searchResults.getContent();
 //
-////        Page<Product> searchResults = goodsRepository.search(queryBuilder.build());
-//        List<Product> contents = searchResults.getContent();
+        Page<Goods> searchResults = goodsRepository.search(searchQuery);
+        List<Goods> contents = searchResults.getContent();
         return null;
     }
 
+    /**
+     * 基本查询构建
+     * @param searchParam
+     * @return
+     */
     private QueryBuilder buildBasicQuery(SearchParam searchParam) {
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
-        queryBuilder.should(QueryBuilders.matchQuery("name", searchParam.getKey()));
+        queryBuilder.should(QueryBuilders.wildcardQuery("keyword",searchParam.getKey()+"*"));
+        queryBuilder.should(QueryBuilders.matchQuery("all",searchParam.getKey()));
         Long startTime = searchParam.getStartTime();
         Long endTime = searchParam.getEndTime();
         if (startTime != null && endTime != null && endTime >= startTime) {

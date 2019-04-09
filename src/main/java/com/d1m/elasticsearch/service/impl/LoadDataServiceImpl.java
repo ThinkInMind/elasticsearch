@@ -32,7 +32,6 @@ public class LoadDataServiceImpl implements LoadDataService {
         int offset = 0;
         int pageSize = 50;
         int size = 0;
-        int count = 0;
         int currentPage = 0;
         do {
             List<ProductResult> allProducts = estoreProductRepository.findProductsWithConditions(wechatId,offset,pageSize);
@@ -42,9 +41,7 @@ public class LoadDataServiceImpl implements LoadDataService {
             size = allProducts.size();
             currentPage ++;
             offset = currentPage* pageSize;
-            count ++;
         } while (size ==50);
-        System.out.println("count = " + count);
     }
 
     private Goods buildGoods(ProductResult productResult) {
@@ -55,8 +52,9 @@ public class LoadDataServiceImpl implements LoadDataService {
         for (ProductSpecResult productSpecResult : productResult.getVariationProducts()) {
             stringBuffer.append(productSpecResult.getSku() + " ");
         }
-        stringBuffer.append(productResult.getProductCode()).append(" ").append(productResult.getProductName());
-        goods.setAll(stringBuffer.toString());
+        stringBuffer.append(productResult.getProductCode());
+        goods.setKeyword(stringBuffer.toString());
+        goods.setAll(productResult.getProductName());
         goods.setSkus(JSON.toJSONString(productResult.getVariationProducts()));
         System.out.println(goods);
         return goods;

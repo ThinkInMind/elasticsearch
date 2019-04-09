@@ -23,9 +23,12 @@ public class Goods {
     @Id
     private Long id;//spuId
     @Field(type = FieldType.Text,analyzer = "ik_max_word")
-    private String all;//可以搜索的关键短语
+    private String all;//可以搜索的关键短语,分词
     @Field(type = FieldType.Keyword)
     private String skus;//当前spu下的多个sku json格式
+
+    @Field(type = FieldType.Keyword)
+    private String keyword;
 
     private String description;
 
