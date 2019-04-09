@@ -11,7 +11,6 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.data.mapping.MappingException;
 import org.springframework.util.StringUtils;
 

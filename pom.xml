@@ -84,11 +84,6 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.38</version>
         </dependency>
-        <!--<dependency>-->
-        <!--<groupId>org.elasticsearch.client</groupId>-->
-        <!--<artifactId>elasticsearch-rest-high-level-client</artifactId>-->
-        <!--<version>6.2.3</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
@@ -126,13 +121,6 @@
             <artifactId>spring-data-mybatis</artifactId>
             <version>1.0.18.D1M-SNAPSHOT</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>com.ifrabbit</groupId>-->
-            <!--<artifactId>spring-boot-starter-data-mybatis</artifactId>-->
-            <!--<version>1.0.17.RELEASE</version>-->
-        <!--</dependency>-->
-
-
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -150,6 +138,11 @@
         <dependency>
             <groupId>com.querydsl</groupId>
             <artifactId>querydsl-apt</artifactId>
+        </dependency>
+        <!--amqp依赖导入-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
 
 
