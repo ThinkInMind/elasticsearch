@@ -5,7 +5,12 @@ spring:
   sleuth:
     sampler:
       percentage: 0.2 #日志的采样率
-
+  rabbitmq:
+      host: ${RABBITMQ_DEFAULT_HOST:${ENV_HOST}}
+      port: 5672
+      username: ${RABBITMQ_DEFAULT_USER:es}
+      password: ${RABBITMQ_DEFAULT_PASS:123456}
+      virtual-host: /es
 
 
 ##  demo for  database connect ##
