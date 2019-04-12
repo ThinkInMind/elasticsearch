@@ -11,6 +11,7 @@ import com.d1m.elasticsearch.service.SearchService;
 import com.d1m.elasticsearch.util.PageUtil.PageBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 @RestController
 @RequestMapping("search")
@@ -22,6 +23,9 @@ public class SearchController extends BaseController{
 
     @Autowired
     private EstoreProductRepository estoreProductRepository;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
 
     @PostMapping("query")

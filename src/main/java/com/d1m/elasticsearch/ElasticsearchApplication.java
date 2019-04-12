@@ -8,7 +8,7 @@ import org.springframework.context.annotation.PropertySource;
 
 @SpringCloudApplication
 @PropertySource({"classpath:bootstrap.yml","classpath:application.yml"})
-@MapperScan("com.d1m.elasticsearch.repository")
+@MapperScan(basePackages = "com.d1m.elasticsearch.repository")
 @ComponentScan("com.d1m.elasticsearch")
 public class ElasticsearchApplication {
     public static void main(String[] args) {

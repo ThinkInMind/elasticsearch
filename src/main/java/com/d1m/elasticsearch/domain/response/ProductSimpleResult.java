@@ -1,7 +1,6 @@
 package com.d1m.elasticsearch.domain.response;
 
 import com.alibaba.fastjson.JSONObject;
-import com.d1m.elasticsearch.common.promotion.IPromotionProduct;
 import com.d1m.elasticsearch.domain.entity.EstoreProductImage;
 import com.d1m.elasticsearch.util.mybatis.JsonTypeHandler;
 import lombok.Data;
@@ -17,7 +16,7 @@ import java.util.List;
  * Created by D1M on 2018/3/20.
  */
 @Data
-public class ProductSimpleResult  implements Serializable, IPromotionProduct {
+public class ProductSimpleResult  implements Serializable{
 
     private Long productId;
 

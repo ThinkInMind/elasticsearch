@@ -12,5 +12,7 @@ public class JunitTest {
         for (String location : locations) {
             System.out.println("location = " + location);
         }
+        Integer a = 126;
+        System.out.println(a + 33);
     }
 }
