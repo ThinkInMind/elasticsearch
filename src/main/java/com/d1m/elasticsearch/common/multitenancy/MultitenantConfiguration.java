@@ -1,10 +1,8 @@
 package com.d1m.elasticsearch.common.multitenancy;
 
-import com.d1m.elasticsearch.configure.MybatisSelectConfigure;
 import com.d1m.elasticsearch.repository.MultiTenantRepository;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 @Configuration
-@AutoConfigureAfter(MybatisSelectConfigure.class)
 public class MultitenantConfiguration {
 
     @Autowired
