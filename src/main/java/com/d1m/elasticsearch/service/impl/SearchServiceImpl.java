@@ -7,11 +7,14 @@ import com.d1m.elasticsearch.repository.GoodsRepository;
 import com.d1m.elasticsearch.service.SearchService;
 import com.d1m.elasticsearch.util.PageUtil.PageBean;
 import org.apache.commons.lang.StringUtils;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.join.query.JoinQueryBuilders;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
@@ -23,6 +26,8 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 
@@ -36,10 +41,13 @@ public class SearchServiceImpl implements SearchService {
     private ElasticsearchTemplate elasticsearchTemplate;
 
     @Override
-    public PageBean EsSearch(PageParam<SearchParam> pageParam) {
+    public PageBean EsSearch(PageParam<SearchParam> pageParam) throws ParseException {
         String key = pageParam.getSearchParam().getKey();
         if (key == null || key.trim().equals("")) {
-            return null;
+            /**  if there is no query condition, return all products */
+            Page<Goods> all = goodsRepository.findAll(PageRequest.of(pageParam.getCurrentPage(), pageParam.getPageSize()));
+            Long count = goodsRepository.count();
+            return PageBean.createPageBean(pageParam.getCurrentPage(),pageParam.getPageSize(),count,all.getContent());
         }
 
 //        SearchRequest searchRequest = new SearchRequest();
@@ -54,11 +62,8 @@ public class SearchServiceImpl implements SearchService {
 //                QueryBuilders.matchAllQuery(),
 //                ScoreMode.None
 //        );
-        SearchQuery searchQuery = new NativeSearchQueryBuilder()
-                .withQuery(buildBasicQuery(pageParam.getSearchParam()))
-                .withPageable(PageRequest.of(pageParam.getCurrentPage(), pageParam.getPageSize()))
-                .withSort(SortBuilders.fieldSort(pageParam.getSortBy()).order(pageParam.getDescending() ? SortOrder.DESC : SortOrder.ASC))
-                .build();
+        NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder()
+                .withQuery(buildBasicQuery(pageParam.getSearchParam()));
 //        /** create a query builder */
 //        NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
 //        /** get basic query conditions */
@@ -70,9 +75,14 @@ public class SearchServiceImpl implements SearchService {
 //        Page<Goods> searchResults = elasticsearchTemplate.queryForPage(searchQuery, Goods.class);
 //        List<Goods> content = searchResults.getContent();
 //
-        Page<Goods> searchResults = goodsRepository.search(searchQuery);
+        /**  using elasticsearchTemplate to query the count of result, index entity is required in parameters */
+        long count = elasticsearchTemplate.count(queryBuilder.build(),Goods.class);
+        queryBuilder.withPageable(PageRequest.of(pageParam.getCurrentPage(),pageParam.getPageSize()));
+        queryBuilder.withSort(SortBuilders.fieldSort(pageParam.getSortBy()).order(pageParam.getDescending()? SortOrder.ASC:SortOrder.DESC));
+        Page<Goods> searchResults = goodsRepository.search(queryBuilder.build());
         List<Goods> contents = searchResults.getContent();
-        return null;
+        PageBean pageBean = PageBean.createPageBean(pageParam.getCurrentPage(), pageParam.getPageSize(), count, contents);
+        return pageBean;
     }
 
     /**
@@ -80,17 +90,27 @@ public class SearchServiceImpl implements SearchService {
      * @param searchParam
      * @return
      */
-    private QueryBuilder buildBasicQuery(SearchParam searchParam) {
-        BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
-        queryBuilder.should(QueryBuilders.wildcardQuery("keyword",searchParam.getKey()+"*"));
-        queryBuilder.should(QueryBuilders.matchQuery("all",searchParam.getKey()));
-        Long startTime = searchParam.getStartTime();
-        Long endTime = searchParam.getEndTime();
-        if (startTime != null && endTime != null && endTime >= startTime) {
-            queryBuilder.must(QueryBuilders.rangeQuery("create_at").gte(searchParam.getStartTime()).lte(searchParam.getEndTime()));
+    private QueryBuilder buildBasicQuery(SearchParam searchParam) throws ParseException {
+        BoolQueryBuilder outerQueryBuilder = QueryBuilders.boolQuery();
+        BoolQueryBuilder innerQueryBuilder = QueryBuilders.boolQuery();
+        /**
+         * In this part, we need to define two queryBuilders in consequence of
+         * two fields exist in elasticsearch when we make a query,so that we can
+         * use double should conditions to get results what we need
+         */
+        innerQueryBuilder.should(QueryBuilders.wildcardQuery("keyword",searchParam.getKey()+"*"));
+        innerQueryBuilder.should(QueryBuilders.matchQuery("all",searchParam.getKey()));
+        outerQueryBuilder.must(innerQueryBuilder);
+        String startTime = searchParam.getStartTime();
+        String endTime = searchParam.getEndTime();
+        if (startTime != null && endTime != null) {
+            long start = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(searchParam.getStartTime()).getTime();
+            long end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(searchParam.getEndTime()).getTime();
+            if (end >= start) {
+                outerQueryBuilder.must(QueryBuilders.rangeQuery("createAt").gte(start).lte(end));
+            }
         }
-//        queryBuilder.must(QueryBuilders.termQuery("code", searchParam.getKey()));
-        return queryBuilder;
+        return outerQueryBuilder;
     }
 
     private void searchWithPageAndSort(NativeSearchQueryBuilder queryBuilder, PageParam<SearchParam> pageParam) {

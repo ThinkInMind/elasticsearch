@@ -4,6 +4,7 @@ package com.d1m.elasticsearch.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.d1m.elasticsearch.common.multitenancy.TenantContext;
 import com.d1m.elasticsearch.domain.entity.EstoreProduct;
+import com.d1m.elasticsearch.domain.enums.EstoreCodeEnum;
 import com.d1m.elasticsearch.domain.param.PageParam;
 import com.d1m.elasticsearch.domain.request.SearchParam;
 import com.d1m.elasticsearch.repository.EstoreProductRepository;
@@ -12,6 +13,8 @@ import com.d1m.elasticsearch.util.PageUtil.PageBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+
+import java.text.ParseException;
 
 @RestController
 @RequestMapping("search")
@@ -29,11 +32,11 @@ public class SearchController extends BaseController{
 
 
     @PostMapping("query")
-    public JSONObject EsSearch(@RequestBody PageParam<SearchParam> pageParam){
+    public JSONObject EsSearch(@RequestBody PageParam<SearchParam> pageParam) throws ParseException {
         PageBean pageBean = searchService.EsSearch(pageParam);
         if (pageBean == null){
         }
-        return null;
+        return representation(EstoreCodeEnum.SUCCESS,pageBean);
     }
 
     @GetMapping("getMemberInfo/{wechatId}/{memberId}")

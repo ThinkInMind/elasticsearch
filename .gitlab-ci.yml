@@ -1,0 +1,37 @@
+stages:
+  - build
+  - push
+  - deploy
+
+
+build-dev:
+  stage: build
+  only:
+    - dev
+    - master
+  tags:
+    - shell-dev
+  script:
+    - mvn -Dmaven.test.skip=true clean package
+
+push-dev:
+  stage: push
+  only:
+    - dev
+    - master
+  tags:
+    - shell-dev
+  script:
+    - mvn docker:push
+
+
+#deploy-dev:
+#  stage: deploy
+#  only:
+#    - dev
+#  tags:
+#    - shell-dev
+#  script:
+#    - cd /root/docker-swarm/
+#    - docker service rm estore-base_estore-core
+#    - docker service create   --replicas 1  -e JAVA_OPTS='-Dlogging.path=/var/log/estore-core' -e JAVA_OPTS=' -Xms256m' -e JAVA_OPTS='-Xmx512m'    --constraint 'node.role ==manager'  --network d1m_cloud_overlay   --mount type=bind,source=/etc/localtime,destination=/etc/localtime:ro  --mount type=bind,source=/data/log,destination=/var/log  --mount type=bind,source=/data/attached,destination=/data/attached --mount type=bind,source=/data/etc/java/fonts,destination=/opt/jdk/jre/lib/fonts  --name  estore-base_estore-core   --publish 10044:10044 --env-file ./env.env       docker.d1m.cn/estore-core:latest
